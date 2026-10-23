@@ -38,12 +38,12 @@ La forma más sencilla de levantar toda la infraestructura (Bases de datos, Rabb
 2.  Abre una terminal en la raíz del proyecto (donde se encuentra el archivo `docker-compose.yml`).
 3.  Ejecuta el siguiente comando para construir y levantar los contenedores:
     ```bash
-    docker-compose up --build ```
+    docker-compose up --build 
 	
 ### Repositorio de Git
-	```bash
-	https://github.com/adrianacarde06/bank-microservices ```
+	
+	https://github.com/adrianacarde06/bank-microservices 
 	
 ### Tablas y bases de datos
-	```bash
-	BaseDatos.sql ```
+	
+	BaseDatos.sql 
