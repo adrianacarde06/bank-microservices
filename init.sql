@@ -1,0 +1,2 @@
+CREATE DATABASE IF NOT EXISTS bank_personas_bd;
+CREATE DATABASE IF NOT EXISTS bank_cuentas_bd;

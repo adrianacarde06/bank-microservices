@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  # 1. Base de Datos MySQL
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-bank
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+
+  # 2. RabbitMQ (Broker de mensajes)
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-bank
+    ports:
+      - "5672:5672"   # Puerto AMQP
+      - "15672:15672" # Consola web
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 3. Microservicio de Personas
+  mspersonas:
+    build: ./mspersonas
+    container_name: mspersonas
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      # Aquí usamos las variables que configuramos en application.properties
+      SERVER_PORT: 8080
+      DB_URL: jdbc:mysql://mysql-db:3306/bank_personas_bd?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: root
+      DB_PASSWORD: admin
+      RABBITMQ_HOST: rabbitmq # Nombre del servicio, NO localhost
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+    ports:
+      - "8080:8080"
+
+  # 4. Microservicio de Cuentas
+  mscuentas:
+    build: ./mscuentas
+    container_name: mscuentas
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8081
+      DB_URL: jdbc:mysql://mysql-db:3306/bank_cuentas_bd?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: root
+      DB_PASSWORD: admin
+      RABBITMQ_HOST: rabbitmq # Nombre del servicio, NO localhost
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+    ports:
+      - "8081:8081"
+
+volumes:
+  mysql_data:
