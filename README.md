@@ -40,10 +40,21 @@ La forma más sencilla de levantar toda la infraestructura (Bases de datos, Rabb
     ```bash
     docker-compose up --build 
 	
+## 📬 Colección de Postman
+Para probar los endpoints fácilmente, he incluido el archivo `Postman_Collection_Bank.json` en la raíz de este repositorio.
+1. Descarga el archivo.
+2. Abre Postman y haz clic en **Import** (arriba a la izquierda).
+3. Selecciona el archivo descargado. Verás todas las peticiones organizadas y listas para ejecutar.
+
+	
 ### Repositorio de Git
 	
 	https://github.com/adrianacarde06/bank-microservices 
 	
+	
 ### Tablas y bases de datos
 	
 	BaseDatos.sql 
+	
+	
+
